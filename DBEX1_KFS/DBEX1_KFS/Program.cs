@@ -24,13 +24,20 @@ namespace DBEX1_KFS
                     case "add":
                         Console.WriteLine("What do you wish to add?");
                         Console.WriteLine("ID can be selected or defaulted with 0");
-                        int id = int.Parse(Console.ReadLine());
-                        Console.WriteLine("Name?");
-                        string name = Console.ReadLine();
-                        Console.WriteLine("Current occupation?");
-                        string status = Console.ReadLine();
-                        Console.WriteLine("Great one moment...");
-                        db.AddPerson(id, name, status);
+                        try
+                        {
+                            int id = int.Parse(Console.ReadLine());
+                            Console.WriteLine("Name?");
+                            string name = Console.ReadLine();
+                            Console.WriteLine("Current occupation?");
+                            string status = Console.ReadLine();
+                            Console.WriteLine("Great one moment...");
+                            db.AddPerson(id, name, status);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("You broke it");
+                        }
                         Console.ReadKey();
                         Console.Clear();
                         state = "start";
@@ -49,6 +56,8 @@ namespace DBEX1_KFS
                         state = "";
                         break;
                     default:
+                        state = "start";
+                        Console.Clear();
                         break;
                 }
             }

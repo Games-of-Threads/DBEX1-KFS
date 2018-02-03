@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,10 +10,12 @@ namespace DBEX1_KFS
     class simple_db
     {
         Dictionary<int, string> database;
+        const string dataFile = "DatabaseFile.dat";
 
         public simple_db()
         {
             database = new Dictionary<int, string>();
+            LoadDatabase();
         }
 
         /// <summary>
@@ -26,7 +29,18 @@ namespace DBEX1_KFS
             if (id == 0)
             {
                 string input = formatString(name, status);
-                database.Add(0, input);
+                for (int i = 0; i < database.Count; i++)
+                {
+                    try
+                    {
+                        database.Add(i, input);
+                        SaveDatabase(i, input);
+                    }
+                    catch (Exception)
+                    {
+                        break;
+                    }
+                }
                 //database.Add(database.Keys.Last<int>() + 1, input);
                 succesReport("add person with default ID");
             }
@@ -34,6 +48,7 @@ namespace DBEX1_KFS
             {
                 string input = formatString(name, status);
                 database.Add(id, input);
+                SaveDatabase(id, input);
                 succesReport(string.Format("add person with ID {0}", id));
             }
             else
@@ -48,25 +63,51 @@ namespace DBEX1_KFS
         /// <param name="id"></param>
         public void CheckPerson(int id)
         {
-            Console.WriteLine(database.Values.ToString());
-            //string status = database.ContainsKey(id)
-            if (database.ContainsKey(id))
+            if (id == 0)
             {
-                string status = database[database.Keys.ElementAt(id)];
-                Console.WriteLine(status);
-                if (id == 0)
+                foreach (var item in database)
                 {
-                    Console.WriteLine(database.ToString());
+                    string status = database[item.Key];
+                    Console.WriteLine("key: {0} value: {1}",item.Key,status);
                 }
-                else
-                {
-                    Console.WriteLine(status);
-                }
+            }
+            else if (id > 0 && database.ContainsKey(id))
+            {
+                string status = database[id];
+                Console.WriteLine("key: {0} value: {1}", id, status);
             }
             else
             {
                 errorReport("CheckPerson");
             }
+        }
+
+        /// <summary>
+        /// saves the current data in a binary file
+        /// </summary>
+        public void SaveDatabase(int id, string input)
+        {
+            try
+            {
+                BinaryWriter writer = new BinaryWriter(File.Open(dataFile, FileMode.Append));
+                writer.Write(string.Format(id + ";" + input));
+                succesReport(string.Format(id + ";" + input + " has been succesfully saved to the database"));
+                writer.Close();
+            }
+            catch (Exception)
+            {
+                errorReport("SaveDatabase");
+            }
+        }
+
+        /// <summary>
+        /// loads the local binary data file into keyvalue memory
+        /// </summary>
+        public void LoadDatabase()
+        {
+            BinaryReader reader = new BinaryReader(File.Open(dataFile, FileMode.OpenOrCreate));
+            Console.WriteLine(reader.Read());
+            reader.Close();
         }
 
         /// <summary>
