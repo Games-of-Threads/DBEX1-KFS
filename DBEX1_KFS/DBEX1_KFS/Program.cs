@@ -18,7 +18,7 @@ namespace DBEX1_KFS
                 switch (state)
                 {
                     case "start":
-                        Console.WriteLine("Welcome to the program \n add: to add people \n check: to check for people \n exit: to exit the program");
+                        Console.WriteLine("Welcome to the program \n   add: to add people \n   check: to check for people \n   exit: to exit the program");
                         state = Console.ReadLine();
                         break;
                     case "add":

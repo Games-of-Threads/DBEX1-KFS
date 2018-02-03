@@ -21,7 +21,7 @@ namespace DBEX1_KFS
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="status"></param>
-        public void AddPerson(int id, string name, string status)
+        public void AddPerson(int id, string name, string status)   
         {
             if (id == 0)
             {
@@ -48,9 +48,12 @@ namespace DBEX1_KFS
         /// <param name="id"></param>
         public void CheckPerson(int id)
         {
-            string status = database.Keys.ToString();
-            if (status != null)
+            Console.WriteLine(database.Values.ToString());
+            //string status = database.ContainsKey(id)
+            if (database.ContainsKey(id))
             {
+                string status = database[database.Keys.ElementAt(id)];
+                Console.WriteLine(status);
                 if (id == 0)
                 {
                     Console.WriteLine(database.ToString());
