@@ -49,7 +49,6 @@ namespace DBEX1_KFS
                         break;
                     }
                 }
-                //database.Add(database.Keys.Last<int>() + 1, input);
                 succesReport("add person with default ID");
             }
             else if (id > 0)
@@ -76,9 +75,19 @@ namespace DBEX1_KFS
             {
                 foreach (var item in database)
                 {
-                    string status = database[item.Key];
-                    Console.WriteLine("key: {0} value: {1}",item.Key,status);
-                    Console.WriteLine(item.Key.ToString());
+                    if (database.ContainsKey(id))
+                    {
+                        Console.WriteLine("whoops");
+                    }
+                    else
+                    {
+                        string status = database[item.Key];
+                        Console.WriteLine("key: {0} value: {1}", item.Key, status);
+                        Console.WriteLine(item.Key.ToString());
+                    }
+                    //string status = database[item.Key];
+                    //Console.WriteLine("key: {0} value: {1}",item.Key,status);
+                    //Console.WriteLine(item.Key.ToString());
                 }
             }
             else if (id > 0 && database.ContainsKey(id))
@@ -92,11 +101,6 @@ namespace DBEX1_KFS
             }
         }
 
-        public void test()
-        {
-
-        }
-
         /// <summary>
         /// saves the current data in a binary file
         /// </summary>
@@ -105,24 +109,10 @@ namespace DBEX1_KFS
             try
             {
                 BinaryWriter writer = new BinaryWriter(File.Open(dataFile, FileMode.Append));
-                //writer.Write(string.Format(id + ";" + input));
-                //char[] text = string.Format(id + ";" + input).ToCharArray();
+
                 byte[] data = Encoding.UTF8.GetBytes(string.Format(id + ";" + input));
-
-                writer.Write(data.GetHashCode());
-
-                //using (SHA512 shaM = new SHA512Managed())
-                //{
-                //    byte[] result = shaM.ComputeHash(data);
-                //    writer.Write(Convert.ToBase64String(result));
-                //}
-                //message = Encoding.UTF8.GetBytes(text);
-                //for (int i = 0; i < text.Length; i++)
-                //{
-                //    message = Encoding.UTF8.GetBytes(text);
-                //}
-                //string message = string.Format(id + ";" + input);
-                //writer.Write(message);
+                writer.Write(data);
+                //BitConverter.ToString(data)
                 succesReport(string.Format(id + ";" + input + " has been succesfully saved to the database"));
                 writer.Dispose();
                 writer.Close();
@@ -140,27 +130,48 @@ namespace DBEX1_KFS
         {
             BinaryReader reader = new BinaryReader(File.Open(dataFile, FileMode.OpenOrCreate));
 
-            string allData = "";
-            //string allData = reader.ReadString();
-            //for (int i = 0; i < reader.BaseStream.Length / sizeof(int); i++)
-            //{
-            //    allData += reader.ReadString();
-            //}
-            Console.WriteLine(allData);
-            //sbyte[] allData = new sbyte[reader.BaseStream.Length];
-            //for (int i = 0; i < reader.BaseStream.Length; i++)
-            //{
-            //    try
-            //    {
-            //        allData[i] = reader.ReadSByte();
-            //        Console.WriteLine(allData[i].ToString());
-            //    }
-            //    catch (Exception)
-            //    {
-            //        errorReport("LoadDatabase");
-            //    }
-            //}
-            Console.WriteLine();
+            //byte[] allData = File.ReadAllBytes(dataFile);
+
+            byte[] allData = new byte[reader.BaseStream.Length];
+            for (int i = 0; i < reader.BaseStream.Length; i++)
+            {
+                allData[i] = reader.ReadByte();
+            }
+
+            char[] data = Encoding.UTF8.GetChars(allData);
+            string nextID = "";
+            string nextInput = "";
+            bool firstOrSecond = true;
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (firstOrSecond)
+                {
+                    if (data[i].ToString() == ";")
+                    {
+                        firstOrSecond = false;
+                    }
+                    else
+                    {
+                        nextID += data[i];
+                    }
+                }
+                else
+                {
+                    if (data[i].ToString() == "]")
+                    {
+                        nextInput += data[i];
+                        database.Add(int.Parse(nextID), nextInput);
+                        firstOrSecond = true;
+                        nextID = "";
+                        nextInput = "";
+                    }
+                    else
+                    {
+                        nextInput += data[i];
+                    }
+                }
+            }
+            reader.Dispose();
             reader.Close();
         }
 
