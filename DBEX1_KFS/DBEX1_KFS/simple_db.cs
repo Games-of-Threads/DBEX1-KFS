@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,8 +34,15 @@ namespace DBEX1_KFS
                 {
                     try
                     {
-                        database.Add(i, input);
-                        SaveDatabase(i, input);
+                        if (!database.ContainsKey(i))
+                        {
+                            database.Add(i, input);
+                            SaveDatabase(i, input);
+                        }
+                        else
+                        {
+                            errorReport("AddPerson");
+                        }
                     }
                     catch (Exception)
                     {
@@ -48,6 +56,7 @@ namespace DBEX1_KFS
             {
                 string input = formatString(name, status);
                 database.Add(id, input);
+
                 SaveDatabase(id, input);
                 succesReport(string.Format("add person with ID {0}", id));
             }
@@ -69,6 +78,7 @@ namespace DBEX1_KFS
                 {
                     string status = database[item.Key];
                     Console.WriteLine("key: {0} value: {1}",item.Key,status);
+                    Console.WriteLine(item.Key.ToString());
                 }
             }
             else if (id > 0 && database.ContainsKey(id))
@@ -82,6 +92,11 @@ namespace DBEX1_KFS
             }
         }
 
+        public void test()
+        {
+
+        }
+
         /// <summary>
         /// saves the current data in a binary file
         /// </summary>
@@ -90,8 +105,26 @@ namespace DBEX1_KFS
             try
             {
                 BinaryWriter writer = new BinaryWriter(File.Open(dataFile, FileMode.Append));
-                writer.Write(string.Format(id + ";" + input));
+                //writer.Write(string.Format(id + ";" + input));
+                //char[] text = string.Format(id + ";" + input).ToCharArray();
+                byte[] data = Encoding.UTF8.GetBytes(string.Format(id + ";" + input));
+
+                writer.Write(data.GetHashCode());
+
+                //using (SHA512 shaM = new SHA512Managed())
+                //{
+                //    byte[] result = shaM.ComputeHash(data);
+                //    writer.Write(Convert.ToBase64String(result));
+                //}
+                //message = Encoding.UTF8.GetBytes(text);
+                //for (int i = 0; i < text.Length; i++)
+                //{
+                //    message = Encoding.UTF8.GetBytes(text);
+                //}
+                //string message = string.Format(id + ";" + input);
+                //writer.Write(message);
                 succesReport(string.Format(id + ";" + input + " has been succesfully saved to the database"));
+                writer.Dispose();
                 writer.Close();
             }
             catch (Exception)
@@ -106,7 +139,28 @@ namespace DBEX1_KFS
         public void LoadDatabase()
         {
             BinaryReader reader = new BinaryReader(File.Open(dataFile, FileMode.OpenOrCreate));
-            Console.WriteLine(reader.Read());
+
+            string allData = "";
+            //string allData = reader.ReadString();
+            //for (int i = 0; i < reader.BaseStream.Length / sizeof(int); i++)
+            //{
+            //    allData += reader.ReadString();
+            //}
+            Console.WriteLine(allData);
+            //sbyte[] allData = new sbyte[reader.BaseStream.Length];
+            //for (int i = 0; i < reader.BaseStream.Length; i++)
+            //{
+            //    try
+            //    {
+            //        allData[i] = reader.ReadSByte();
+            //        Console.WriteLine(allData[i].ToString());
+            //    }
+            //    catch (Exception)
+            //    {
+            //        errorReport("LoadDatabase");
+            //    }
+            //}
+            Console.WriteLine();
             reader.Close();
         }
 
