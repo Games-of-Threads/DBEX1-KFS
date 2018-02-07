@@ -1,0 +1,5 @@
+C:\Users\reape\Desktop\GIT\DBEX1-KFS\DBEX1_KFS\DBEX1_KFS\bin\Debug\DBEX1_KFS.exe.config
+C:\Users\reape\Desktop\GIT\DBEX1-KFS\DBEX1_KFS\DBEX1_KFS\bin\Debug\DBEX1_KFS.exe
+C:\Users\reape\Desktop\GIT\DBEX1-KFS\DBEX1_KFS\DBEX1_KFS\bin\Debug\DBEX1_KFS.pdb
+C:\Users\reape\Desktop\GIT\DBEX1-KFS\DBEX1_KFS\DBEX1_KFS\obj\Debug\DBEX1_KFS.exe
+C:\Users\reape\Desktop\GIT\DBEX1-KFS\DBEX1_KFS\DBEX1_KFS\obj\Debug\DBEX1_KFS.pdb
